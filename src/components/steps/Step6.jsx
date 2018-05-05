@@ -11,7 +11,7 @@ class Step6 extends React.Component {
         "6ff1ebfe-2b56-493c-83b8-c0e5ff45fcaa": {
           uuid: "6ff1ebfe-2b56-493c-83b8-c0e5ff45fcaa",
           text: "Get your first appointments at the closest physiotherapist.",
-          done: true
+          done: false
         },
         "922b1464-d8f3-4668-b3b2-37d59492f3a6": {
           uuid: "922b1464-d8f3-4668-b3b2-37d59492f3a6",
