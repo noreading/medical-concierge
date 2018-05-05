@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
-import Nav from "./Nav";
+import Progress from "./Progress";
 import Step1 from "./steps/Step1";
 import Step2 from "./steps/Step2";
 import Step3 from "./steps/Step3";
@@ -33,7 +33,7 @@ class App extends React.Component {
             this.state.step === 1 ? "splash-screen" : ""
           }`}
         >
-          <Nav step={this.state.step} />
+          <Progress step={this.state.step} />
 
           <Route
             exact

@@ -22,13 +22,13 @@ class Step5 extends React.Component {
             <h3>How to shower with a sling</h3>
             <p>
               <iframe
-                width="325"
+                width="300"
                 height="195"
                 src="https://www.youtube.com/embed/OIzfaLJk1xs"
                 frameBorder="0"
                 allow="autoplay; encrypted-media"
                 title="How to shower with a sling"
-                allowfullscreen
+                allowFullScreen
               />
             </p>
             <p>

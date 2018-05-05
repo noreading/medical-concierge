@@ -1,13 +1,7 @@
 @import "../../node_modules/bootstrap/scss/bootstrap";
-$stepSize: 3rem;
 
 body {
-  min-height: 100%;
   height: 100%;
-}
-
-.app {
-  max-width: 700px;
 }
 
 h1 {
@@ -26,23 +20,23 @@ h3 {
 }
 
 p {
-  font-size: 1.25rem;
+  font-size: 1rem;
   line-height: 1.5;
   text-align: justify;
 }
 
-.progress {
-  margin: 1rem 0;
-
-  .progress-bar {
-    background: #007bff !important;
-  }
+.app {
+  width: 380px;
+  min-height: 740px;
+  // overflow: auto;
+  margin: 1rem auto;
+  border: 4px solid #000;
+  border-radius: 10px;
 }
 
 .splash-screen {
-  background: url("/adult-care-cure-433635.jpg") no-repeat;
+  background: url("/images/doctor.jpg") no-repeat;
   background-size: cover;
-  min-height: 800px;
   padding-top: 1rem;
 }
 
@@ -54,7 +48,7 @@ p {
   text-shadow: 2px 2px 1px rgba(150, 150, 150, 1);
 }
 
-.splash-input {
+.icd-form {
   margin-top: 450px;
 }
 
@@ -73,10 +67,39 @@ p {
   }
 }
 
+.progress {
+  margin: 1rem 0;
+
+  .progress-bar {
+    background: #007bff !important;
+  }
+}
+
+.google-map {
+  position: relative !important;
+  width: 340px !important;
+  height: 200px !important;
+  margin-bottom: 1rem;
+}
+
+.map-places {
+  .number {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    text-align: center;
+    background: #f75c50;
+
+    margin-right: 0.5rem;
+  }
+}
+
 .tips,
 .tasks {
   h3 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 
   .list-group-item {

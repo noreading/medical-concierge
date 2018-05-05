@@ -1,6 +1,6 @@
 import React from "react";
 
-class Nav extends React.Component {
+class Progress extends React.Component {
   precisionRound(number, precision) {
     var factor = Math.pow(10, precision);
     return Math.round(number * factor) / factor;
@@ -30,4 +30,4 @@ class Nav extends React.Component {
   }
 }
 
-export default Nav;
+export default Progress;

@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
+import { Map, Marker, GoogleApiWrapper, InfoWindow } from "google-maps-react";
 
 class Step4 extends React.Component {
   constructor(props) {
@@ -7,16 +8,126 @@ class Step4 extends React.Component {
     this.props.updateStep(4);
 
     this.state = {
-      selected: false
+      map: null,
+      fitBounds: false,
+      autocomplete: null,
+      locations: [],
+      activeMarker: null,
+      infoWindow: null,
+      placesService: null
     };
   }
 
-  select = e => {
-    console.log("change me");
+  situationSelect = React.createRef();
+  locationInput = React.createRef();
+
+  select = event => {
+    event.preventDefault();
+
     this.setState(state => {
-      state.selected = true;
+      state.livingSituation = this.situationSelect.current.value;
       return state;
     });
+  };
+
+  mapInit = (mapProps, map) => {
+    const { google } = mapProps;
+
+    this.setState(state => {
+      state.map = map;
+      state.center = map.getCenter();
+      state.placesService = new google.maps.places.PlacesService(
+        this.state.map
+      );
+      return state;
+    });
+
+    this.state.map.addListener("zoom_changed", this.onZoomChanged);
+    this.initAutocomplete(google);
+    this.fetchPlaces();
+  };
+
+  initAutocomplete = google => {
+    const autocomplete = new google.maps.places.Autocomplete(
+      this.locationInput.current,
+      {
+        type: "locality"
+      }
+    );
+
+    autocomplete.addListener("place_changed", this.onPlaceChanged);
+
+    this.setState(state => {
+      state.autocomplete = autocomplete;
+      return state;
+    });
+  };
+
+  fetchPlaces = () => {
+    const bounds = this.state.map.getBounds();
+
+    if (!bounds) {
+      window.setTimeout(() => {
+        this.fetchPlaces();
+      }, 250);
+
+      return false;
+    }
+
+    if (this.state.fitBounds === false) {
+      this.state.map.fitBounds(bounds);
+      this.setState(state => {
+        state.fitBounds = true;
+        return state;
+      });
+    }
+
+    this.state.placesService.nearbySearch(
+      {
+        bounds,
+        name: "Pflegedienst"
+      },
+      (results, status) => {
+        const locations = results.map((result, index) => {
+          let photo = null;
+
+          if (result.photos && result.photos.length !== 0) {
+            photo = result.photos[0].getUrl({ maxWidth: 100 });
+          }
+
+          return {
+            index: index,
+            location: result.geometry.location,
+            name: result.name,
+            address: result.vicinity,
+            reference: result.reference,
+            photo
+          };
+        });
+
+        this.setState(state => {
+          state.locations = locations;
+          return state;
+        });
+      }
+    );
+  };
+
+  onZoomChanged = () => {
+    if (this.state.fitBounds === true) {
+      this.fetchPlaces();
+    }
+  };
+
+  onPlaceChanged = () => {
+    var place = this.state.autocomplete.getPlace();
+
+    if (place.geometry) {
+      this.state.map.panTo(place.geometry.location);
+      this.fetchPlaces();
+    } else {
+      this.locationInput.current.placeholder = "Enter a valid address";
+    }
   };
 
   render() {
@@ -29,17 +140,25 @@ class Step4 extends React.Component {
             type="text"
             name="living_situation"
             className="form-control"
+            ref={this.situationSelect}
             onChange={this.select}
           >
-            <option>I am living alone, with family support</option>
-            <option>I am living alone, without family support</option>
-            <option>I am living in a relationship</option>
+            {this.state.livingSituation === null && (
+              <option value="">- please choose -</option>
+            )}
+
+            <option value="alone-with-family-support">
+              I am living alone, with family support
+            </option>
+            <option value="alone-without-family-support">
+              I am living alone, without family support
+            </option>
+            <option value="with-a-partner">I am living with a partner</option>
           </select>
         </div>
 
-        {this.state.selected && (
+        {this.state.livingSituation !== null && (
           <Fragment>
-            <br />
             <h3>Get home after release</h3>
 
             <ul className="list-group">
@@ -51,26 +170,107 @@ class Step4 extends React.Component {
                 <i className="fa fa-fw fa-bus" />
                 &nbsp; Use public transport
               </li>
-              <li className="list-group-item">
-                <i className="fa fa-fw fa-phone" />
-                &nbsp; Call a friend
-              </li>
+
+              {this.state.livingSituation ===
+                "alone-without-family-support" && (
+                <li className="list-group-item">
+                  <i className="fa fa-fw fa-phone" />
+                  &nbsp; Call a friend
+                </li>
+              )}
+
+              {this.state.livingSituation === "alone-with-family-support" && (
+                <li className="list-group-item">
+                  <i className="fa fa-fw fa-phone" />
+                  &nbsp; Call your family
+                </li>
+              )}
+
+              {this.state.livingSituation === "with-a-partner" && (
+                <li className="list-group-item">
+                  <i className="fa fa-fw fa-phone" />
+                  &nbsp; Call your partner
+                </li>
+              )}
             </ul>
 
-            <br />
-
-            <h3>Get personal assistance at home</h3>
-
-            <input className="form-control" placeholder="Your location" />
-            <br />
-
-            <ul className="list-group">
-              <li className="list-group-item">
-                <strong>Care 4 you</strong>
+            {this.state.livingSituation === "alone-without-family-support" && (
+              <Fragment>
                 <br />
-                2 W 22nd St<br />
-              </li>
-            </ul>
+
+                <h3>Get personal assistance at home</h3>
+
+                <Map
+                  className="google-map"
+                  google={this.props.google}
+                  zoom={15}
+                  initialCenter={{
+                    lat: 51.332074,
+                    lng: 12.37353
+                  }}
+                  style={{
+                    width: "340px",
+                    height: "200px",
+                    position: "relative"
+                  }}
+                  onReady={this.mapInit}
+                >
+                  {this.state.center !== null && (
+                    <Marker
+                      name={"Current location"}
+                      icon={{
+                        url: "/images/maps/marker-blue.png"
+                      }}
+                    />
+                  )}
+
+                  {this.state.locations.length !== 0 &&
+                    this.state.locations.map(result => {
+                      const position = {
+                        lat: result.location.lat(),
+                        lng: result.location.lng()
+                      };
+                      return (
+                        <Marker
+                          name={result.name}
+                          position={position}
+                          key={result.reference}
+                          label={{ text: (result.index + 1).toString() }}
+                        />
+                      );
+                    })}
+
+                  {this.state.infoWindow !== null && (
+                    <InfoWindow marker={this.state.activeMarker} visible={true}>
+                      <div>
+                        <h1>{this.state.infoWindow.title}</h1>
+                        <p>{this.state.infoWindow.text}</p>
+                      </div>
+                    </InfoWindow>
+                  )}
+                </Map>
+
+                <p>
+                  <input
+                    className="form-control"
+                    placeholder="Your location"
+                    ref={this.locationInput}
+                    defaultValue="Peterssteinweg 14, 04107 Leipzig"
+                  />
+                </p>
+                <ul className="map-places list-group">
+                  {this.state.locations.map(result => (
+                    <li className="list-group-item" key={result.reference}>
+                      <span className="number">{result.index + 1}</span>
+                      <strong>{result.name}</strong>
+                      <br />
+                      {result.address}
+                      <br />
+                    </li>
+                  ))}
+                </ul>
+              </Fragment>
+            )}
 
             <br />
             <Link to="/5" className="btn btn-primary">
@@ -86,4 +286,6 @@ class Step4 extends React.Component {
   }
 }
 
-export default Step4;
+export default GoogleApiWrapper({
+  apiKey: "AIzaSyCat_rojkjHmAY2GXq2-Qpkp5rF6n4Lgd4"
+})(Step4);

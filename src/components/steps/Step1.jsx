@@ -2,6 +2,13 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 
 class Step1 extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      errors: []
+    };
+  }
+
   icd = React.createRef();
 
   componentDidMount() {
@@ -12,18 +19,18 @@ class Step1 extends React.Component {
     e.preventDefault();
     const errors = [];
 
-    // validate
-    if (!this.icd.current.value.match(/[a-z0-9.]+/i)) {
-      errors.push("This is an invalid format");
+    if (!this.icd.current.value.match(/[a-z][0-9.]+/i)) {
+      errors.push("That's not a valid ICD Number.");
     }
 
-    // form send successfully
+    this.setState(state => {
+      state.errors = errors;
+      return state;
+    });
+
     if (errors.length === 0) {
       this.props.history.push("/2");
-      //window.history.pushState({}, "test", "/2");
     }
-
-    console.log(errors);
   };
 
   render() {
@@ -33,7 +40,7 @@ class Step1 extends React.Component {
           Your Medical<br />Concierge
         </h1>
 
-        <form onSubmit={this.handleSubmit}>
+        <form className="icd-form" onSubmit={this.handleSubmit}>
           <div className="input-group mb-2 splash-input">
             <input
               type="text"
@@ -49,6 +56,11 @@ class Step1 extends React.Component {
               </button>
             </div>
           </div>
+          {this.state.errors.length !== 0 && (
+            <div className="alert alert-danger">
+              {this.state.errors.map(message => <span>{message}</span>)}
+            </div>
+          )}
         </form>
       </div>
     );

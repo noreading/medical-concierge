@@ -12,7 +12,11 @@ class Step2 extends React.Component {
       <div>
         <h2>Fracture of shoulder and upper arm</h2>
 
-        <img src="/shoulder-image.jpg" style={{ maxWidth: "100%" }} alt="" />
+        <img
+          src="/images/broken-shoulder.jpg"
+          style={{ maxWidth: "100%" }}
+          alt=""
+        />
         <br />
         <br />
         <p>
