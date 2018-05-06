@@ -14,6 +14,17 @@ Information that the patient may be entitled to domestic help (approx. 40% of he
 
 At the end of the recommendations for action, the patient receives a checklist to be able to organise the necessary preparations for his discharge and the first steps afterwards in a targeted manner. The more the patient takes care of the time after discharge, the less likely it is that he will have to go to hospital again due to a lack of knowledge or unfavourable actions.
 
+## The Team
+
+The development of the idea, the concept and the presentation of this project was a great experience of teamwork made by the following people:
+
+* [Christina Rückert](https://www.linkedin.com/in/christinarueckert/)
+* [Dominik Hanke](https://www.linkedin.com/in/dominik-hanke-0aa05195/)
+* Kristina Engelmann
+* [Marissa Rolls](https://www.linkedin.com/in/marissa-rolls-267a4219/)
+* [Martin Holmes](https://www.linkedin.com/in/martin-holmes-8839107b/)
+* [Tamim Al-Marie](https://www.linkedin.com/in/tamim-al-marie-417a5013b/)
+
 ## The Technologies
 
 ### This Mockup
